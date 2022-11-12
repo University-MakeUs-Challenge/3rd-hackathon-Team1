@@ -91,7 +91,7 @@ public class PartyDao {
 
     public List<PartyCancelRespDto> getParticipations(PartyCancelReqDto partyCancelReqDto) {
         String getParticipateQuery = "select * from Participate AS pa " +
-                                        "LEFT OUTER JOIN User AS user ON pa.member = user.id where pa.id = ? AND pa.active = ? ";
+                "LEFT OUTER JOIN User AS user ON pa.member = user.id where pa.id = ? AND pa.active = ? ";
         Long partyId = partyCancelReqDto.getPartyId();
         String status = "ACTIVE";
         return this.jdbcTemplate.query(getParticipateQuery,
