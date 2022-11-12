@@ -31,6 +31,10 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PASSWORD(false, 2020, "비밀번호를 입력해주세요."),
     USERS_PASSWORD_FORMAT(false, 2021, "비밀번호는 8자 이상의 영문 대소문자와 특수문자로 구성해야 합니다."),
 
+    POST_PARTY_EMPTY_VALUE(false, 2030, "값을 입력하지 않았습니다."),
+    POST_PARTY_EXISTS_LEADER(false, 2031, "이미 파티그룹을 생성했습니다."),
+    POST_PARTY_STATUS_ERROR(false, 2032, "활성상태 변경을 실패했습니다."),
+    POST_PARTY_EXPIRE_TIME(false, 2033, "만료 시간을 갱신할 수 없습니다."),
 
     /**
      * 3000 : Response 오류

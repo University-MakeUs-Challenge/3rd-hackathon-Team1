@@ -1,7 +1,7 @@
 # MySQL 
 spring:
   datasource:
-    url: jdbc:mysql://3.39.214.207:3306/umc_db?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: admin
+    url: jdbc:mysql://3.39.214.207:3306/umc_db?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
     password: dbdpaTl12!
     driver-class-name: com.mysql.cj.jdbc.Driver
