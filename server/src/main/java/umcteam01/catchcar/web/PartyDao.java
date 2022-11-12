@@ -165,4 +165,34 @@ public class PartyDao {
         System.out.println(results);
         return results;
     }
+
+    public List<PartyReadResDto> getPartyListByUniv(Long univ_id) {
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer\n" +
+                "                                from Party p, University un, Location pin, Location des, User u\n" +
+                "                                where p.status='ACTIVE'\n" +
+                "                                and p.univ = un.id and un.id=? and p.pin = pin.id and p.destination = des.id and p.leader = u.id\n" +
+                "                                order by p.expiredAt";
+
+        Long getPartyParams = univ_id;
+        System.out.println(getPartyParams);
+
+        List<PartyReadResDto> results = jdbcTemplate.query(getPartyQuery,
+                new RowMapper<PartyReadResDto>() {
+                    @Override
+                    public PartyReadResDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        PartyReadResDto partyReadResDto = new PartyReadResDto(
+                                rs.getLong("p.id"),
+                                rs.getString("un.name"),
+                                rs.getString("pin.name"),
+                                rs.getString("des.name"),
+                                rs.getInt("p.min_full"),
+                                rs.getString("p.active"),
+                                rs.getLong("p.timer"));
+                        return partyReadResDto;
+                    }
+                },
+                getPartyParams);
+        System.out.println(results);
+        return results;
+    }
 }
