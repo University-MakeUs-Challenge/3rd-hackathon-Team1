@@ -70,7 +70,7 @@ public class PartyController {
     // TODO 파티 상태 변경 active -> partyService.updatePartyActive
 
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/status")
     public BaseResponse<List<PartyCancelRespDto>> partyCancel(@RequestBody PartyCancelReqDto partyCancelReqDto) {
         System.out.println(partyCancelReqDto);
         try {
@@ -97,10 +97,10 @@ public class PartyController {
     
      /**
      * 그룹 참여 API
-     * [PATCH] /party
+     * [PATCH] /party/catch
      */
     @ResponseBody
-    @PatchMapping("/party")
+    @PatchMapping("/catch")
     public BaseResponse<List<PartyJoinRes>> participateParty(@RequestBody PartyJoinReq partyJoinReq){
         try {
             List<PartyJoinRes> partyJoinRes = partyService.participateParty(partyJoinReq);
@@ -148,18 +148,21 @@ public class PartyController {
      */
     @GetMapping("/search")
     public BaseResponse<List<PartyReadResDto>> getPartyListByPin(PartySearchKeyword keyword) throws BaseException {
+        System.out.println(keyword);
         if (keyword.getPin_id() == null && keyword.getUniv_id() == null) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
 
         List<PartyReadResDto> partyReadResDto = new ArrayList<PartyReadResDto>();
 
-        if (keyword.getUniv_id() == null) {
+        if (keyword.getUniv_id() == null && keyword.getPin_id() != null) {
             partyReadResDto = partyProvider.getPartyListByPin(keyword.getPin_id());
+            return new BaseResponse<>(partyReadResDto);
         }
 
-        if (keyword.getPin_id() == null) {
+        if (keyword.getPin_id() == null && keyword.getUniv_id() != null) {
             partyReadResDto = partyProvider.getPartyListByUniv(keyword.getUniv_id());
+            return new BaseResponse<>(partyReadResDto);
         }
 
         return new BaseResponse<>(partyReadResDto);
