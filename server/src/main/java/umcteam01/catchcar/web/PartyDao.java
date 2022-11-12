@@ -108,7 +108,7 @@ public class PartyDao {
     }
 
     public PartyReadResDto getParty(Long partyId) {
-        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expired_at\n" +
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expiredAt,\n" +
                 "       if(memberNum is null, 0, memberNum) as memberNum\n" +
                 "from Party p\n" +
                 "         join University un on un.id=p.univ\n" +
@@ -136,7 +136,7 @@ public class PartyDao {
     }
 
     public List<PartyReadResDto> getPartyList() {
-        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expired_at\n" +
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expiredAt\n" +
                 "                from Party p, University un, Location pin, Location des, User u\n" +
                 "                where p.status='ACTIVE'\n" +
                 "                and p.univ = un.id and p.pin = pin.id and p.destination = des.id and p.leader = u.id" +
@@ -157,7 +157,7 @@ public class PartyDao {
     }
 
     public List<PartyReadResDto> getPartyListByPin(Long pin_id) {
-        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expired_at\n" +
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expiredAt\n" +
                 "                                from Party p, University un, Location pin, Location des, User u\n" +
                 "                                where p.status='ACTIVE'\n" +
                 "                                and p.univ = un.id and pin.id=? and p.pin = pin.id and p.destination = des.id and p.leader = u.id\n" +
@@ -189,7 +189,7 @@ public class PartyDao {
     }
 
     public List<PartyReadResDto> getPartyListByUniv(Long univ_id) {
-        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expired_at\n" +
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expiredAt\n" +
                 "                                from Party p, University un, Location pin, Location des, User u\n" +
                 "                                where p.status='ACTIVE'\n" +
                 "                                and p.univ = un.id and un.id=? and p.pin = pin.id and p.destination = des.id and p.leader = u.id\n" +
