@@ -6,6 +6,8 @@ import umcteam01.catchcar.domain.PartyJoinReq;
 import umcteam01.catchcar.domain.PartyJoinRes;
 import umcteam01.catchcar.web.*;
 
+import java.util.List;
+
 import static umcteam01.catchcar.config.BaseResponseStatus.*;
 
 @Service
@@ -16,15 +18,12 @@ public class PartyService {
         this.partyDao = partyDao;
     }
 
-    public PartyJoinRes participateParty(PartyJoinReq partyJoinReq) throws BaseException {
-        try {
-            int result = partyDao.participateParty(partyJoinReq);
-            if (result == 0){
-                throw new BaseException(MODIFY_FAIL_USERNAME);
+    public List<PartyJoinRes> participateParty(PartyJoinReq partyJoinReq) throws BaseException {
+            List<PartyJoinRes> partyJoinRes = partyDao.participateParty(partyJoinReq);
+            if (partyJoinRes.size() == 0){  // participate 추가에 실패한 경우
+                throw new BaseException(INVALID_PARTICIPATE);
             }
-            return new PartyJoinRes(true, 200, "요청에 성공하였습니다.");
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
+            return partyJoinRes;
+
     }
 }
