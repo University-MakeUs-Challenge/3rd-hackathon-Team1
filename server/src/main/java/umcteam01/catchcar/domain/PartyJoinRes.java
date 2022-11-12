@@ -5,7 +5,5 @@ import lombok.*;
 @Getter @Setter
 @AllArgsConstructor
 public class PartyJoinRes {
-    private boolean isSuccess;
-    private int code;
-    private String message;
+    private Long id;
 }
