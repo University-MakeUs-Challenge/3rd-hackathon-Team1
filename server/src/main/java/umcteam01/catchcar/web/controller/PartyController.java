@@ -31,8 +31,8 @@ import static umcteam01.catchcar.config.BaseResponseStatus.POST_PARTY_EXISTS_LEA
 @RequestMapping("/party")
 public class PartyController {
 
-    @Autowired private final PartyProvider partyProvider;
-    @Autowired private final PartyService partyService;
+    private final PartyProvider partyProvider;
+    private final PartyService partyService;
 
     /**
      * 파티 생성
@@ -63,16 +63,6 @@ public class PartyController {
     // TODO 파티 상태 변경 active -> partyService.updatePartyActive
 
 
-    @RestController
-    @RequestMapping("/party")
-    public class PartyController {
-        private final PartyService partyService;
-        private final PartyProvider partyProvider;
-
-        public PartyController(PartyProvider partyProvider, PartyService partyService) {
-            this.partyProvider = partyProvider;
-            this.partyService = partyService;
-    }
 
     @PatchMapping("/{id}")
     public BaseResponse<List<PartyCancleRespDto>> partyCancle(@RequestBody PartyCancleReqDto partyCancleReqDto) {

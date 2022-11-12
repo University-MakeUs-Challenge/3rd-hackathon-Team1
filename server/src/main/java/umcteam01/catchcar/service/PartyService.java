@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import umcteam01.catchcar.config.BaseException;
 import umcteam01.catchcar.config.BaseResponseStatus;
+import umcteam01.catchcar.domain.PartyCancleReqDto;
 import umcteam01.catchcar.domain.PartyCreateReqDto;
 import umcteam01.catchcar.domain.PartyCreateResDto;
 import umcteam01.catchcar.web.PartyDao;
@@ -59,6 +60,8 @@ public class PartyService {
             partyDao.updatePartyStatus(partyRes);
         } catch (Exception exception) {
             throw new BaseException(POST_PARTY_STATUS_ERROR);
+        }
+    }
 
     // 회원정보 수정(Patch)
     public void modifyParticipateActive(PartyCancleReqDto partyCancleReqDto) throws BaseException {

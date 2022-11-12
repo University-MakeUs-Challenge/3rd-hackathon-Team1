@@ -51,12 +51,14 @@ public class PartyProvider {
         }
     }
 
-    /*public PartyReadResDto getParty(Long party_id) throws BaseException {
+    public PartyReadResDto getParty(Long party_id) throws BaseException {
         try {
             PartyReadResDto partyReadResDto = partyDao.getParty(party_id);
             return partyReadResDto;
-        } cat
-    }*/
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
     /**
      * 특정 id값을 가지는 유저 조회
