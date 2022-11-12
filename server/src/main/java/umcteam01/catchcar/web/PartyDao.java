@@ -5,15 +5,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import umcteam01.catchcar.config.BaseException;
-import umcteam01.catchcar.domain.PartyCreateReqDto;
-import umcteam01.catchcar.domain.PartyCreateResDto;
-
-import umcteam01.catchcar.domain.PartyCancleReqDto;
-import umcteam01.catchcar.domain.PartyCancleRespDto;
+import umcteam01.catchcar.domain.*;
 
 import javax.sql.DataSource;
 import org.springframework.jdbc.core.RowMapper;
-import umcteam01.catchcar.domain.PartyReadResDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -54,7 +49,7 @@ public class PartyDao {
 
     /**
      * 파티 만료 시 status 비활성화로 설정
-     * @param partyReq
+     * @param
      */
     public void updatePartyStatus(PartyCreateResDto partyRes) {
         String updatePartyStatusQuery = "update Party set status='INACTIVE' where id=?";
@@ -195,4 +190,6 @@ public class PartyDao {
         System.out.println(results);
         return results;
     }
+
+
 }
