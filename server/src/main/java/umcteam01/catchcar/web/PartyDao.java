@@ -94,10 +94,17 @@ public class PartyDao {
     }
 
     public PartyReadResDto getParty(Long party_id) {
-        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer\n" +
-                "                from Party p, University un, Location pin, Location des, User u\n" +
-                "                where p.id = ? and p.status='ACTIVE'\n" +
-                "                and p.univ = un.id and p.pin = pin.id and p.destination = des.id and p.leader = u.id";
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer,\n" +
+                "       if(memberNum is null, 0, memberNum) as memberNum\n" +
+                "from Party p\n" +
+                "         join University un on un.id=p.univ\n" +
+                "         join Location pin on pin.id = p.pin\n" +
+                "         join Location des on des.id=p.destination\n" +
+                "         left join (select id, count(*) as memberNum\n" +
+                "                    from Participate\n" +
+                "                    where active = 'ACTIVE'\n" +
+                "                    group by id) as part on part.id = p.id\n" +
+                "where p.active='ACTIVE' and p.id=?;";
         Long getPartyParams = party_id;
 
         return this.jdbcTemplate.queryForObject(getPartyQuery,
@@ -108,7 +115,8 @@ public class PartyDao {
                         rs.getString("des.name"),
                         rs.getInt("p.min_full"),
                         rs.getString("p.active"),
-                        rs.getLong("p.timer")),
+                        rs.getLong("p.timer"),
+                        rs.getLong("memberNum")),
                 getPartyParams);
     }
 
@@ -127,6 +135,7 @@ public class PartyDao {
                         rs.getString("des.name"),
                         rs.getInt("p.min_full"),
                         rs.getString("p.active"),
+                        rs.getLong("p.timer"),
                         rs.getLong("p.timer"))
         );
     }
@@ -152,6 +161,7 @@ public class PartyDao {
                                 rs.getString("des.name"),
                                 rs.getInt("p.min_full"),
                                 rs.getString("p.active"),
+                                rs.getLong("p.timer"),
                                 rs.getLong("p.timer"));
                                 return partyReadResDto;
                     }
@@ -182,6 +192,7 @@ public class PartyDao {
                                 rs.getString("des.name"),
                                 rs.getInt("p.min_full"),
                                 rs.getString("p.active"),
+                                rs.getLong("p.timer"),
                                 rs.getLong("p.timer"));
                         return partyReadResDto;
                     }
