@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import umcteam01.catchcar.domain.*;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository
 public class PartyDao {
@@ -17,11 +18,16 @@ public class PartyDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public int participateParty(PartyJoinReq partyJoinReq){
+    public List<PartyJoinRes> participateParty(PartyJoinReq partyJoinReq){
         String participatePartyQuery = "insert into Participate (id, member, status, createdAt, updateAt, active)" +
-                "VALUE(1, 1, \"ACTIVE\", now(), now(), \"ACTIVE\")";
+                "VALUE(?, ?, \"ACTIVE\", now(), now(), \"ACTIVE\")";
         Object[] participatePartyParams = new Object[]{partyJoinReq.getUser_id(), partyJoinReq.getParty_id()};
+        this.jdbcTemplate.update(participatePartyQuery, participatePartyParams);
 
-        return this.jdbcTemplate.update(participatePartyQuery, participatePartyParams);
+        String displayPartyQuery = "SELECT id FROM Participate WHERE member = ?";
+        Long displayPartyParams = partyJoinReq.getParty_id();
+        return this.jdbcTemplate.query(displayPartyQuery,
+                (rs, rowNum) -> new PartyJoinRes(rs.getLong("id")),
+                displayPartyParams);
     }
 }
