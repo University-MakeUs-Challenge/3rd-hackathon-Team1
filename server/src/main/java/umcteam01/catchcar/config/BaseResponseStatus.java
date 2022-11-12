@@ -35,6 +35,8 @@ public enum BaseResponseStatus {
     POST_PARTY_EXISTS_LEADER(false, 2031, "이미 파티그룹을 생성했습니다."),
     POST_PARTY_STATUS_ERROR(false, 2032, "활성상태 변경을 실패했습니다."),
     POST_PARTY_EXPIRE_TIME(false, 2033, "만료 시간을 갱신할 수 없습니다."),
+    
+    INVALID_PARTICIPATE(false, 2040, "유효하지 않은 파티입니다."),
 
     /**
      * 3000 : Response 오류

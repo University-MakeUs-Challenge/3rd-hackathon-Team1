@@ -1,5 +1,7 @@
 package umcteam01.catchcar.web.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,12 +13,9 @@ import umcteam01.catchcar.service.PartyProvider;
 import umcteam01.catchcar.service.PartyService;
 
 import static umcteam01.catchcar.config.BaseResponseStatus.REQUEST_ERROR;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.web.bind.annotation.*;
+import umcteam01.catchcar.domain.PartyJoinReq;
+import umcteam01.catchcar.domain.PartyJoinRes;
+import umcteam01.catchcar.service.PartyService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,8 @@ import static umcteam01.catchcar.config.BaseResponseStatus.POST_PARTY_EXISTS_LEA
 @RequiredArgsConstructor
 @RequestMapping("/party")
 public class PartyController {
+
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final PartyProvider partyProvider;
     private final PartyService partyService;
@@ -56,6 +57,7 @@ public class PartyController {
         }
     }
 
+
     // TODO 파티 만료 시 status -> INACTIVE (partyService.updatePartyStatus)
     // TODO 파티 상태 변경 active -> partyService.updatePartyActive
 
@@ -82,6 +84,21 @@ public class PartyController {
             return new BaseResponse<>(partyCancleRespDtos);
         } catch (BaseException e) {
             throw new RuntimeException(e);
+        }
+    }
+    
+     /**
+     * 그룹 참여 API
+     * [PATCH] /party
+     */
+    @ResponseBody
+    @PatchMapping("/party")
+    public BaseResponse<List<PartyJoinRes>> participateParty(@RequestBody PartyJoinReq partyJoinReq){
+        try {
+            List<PartyJoinRes> partyJoinRes = partyService.participateParty(partyJoinReq);
+            return new BaseResponse<>(partyJoinRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
         }
     }
 
@@ -140,7 +157,6 @@ public class PartyController {
         return new BaseResponse<>(partyReadResDto);
 
     }
-
 
 
 }

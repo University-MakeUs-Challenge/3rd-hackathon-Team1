@@ -6,19 +6,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import umcteam01.catchcar.config.BaseException;
+
 import umcteam01.catchcar.config.BaseResponseStatus;
 import umcteam01.catchcar.domain.PartyCancleReqDto;
 import umcteam01.catchcar.domain.PartyCreateReqDto;
 import umcteam01.catchcar.domain.PartyCreateResDto;
-import umcteam01.catchcar.web.PartyDao;
+import umcteam01.catchcar.domain.PartyJoinReq;
+import umcteam01.catchcar.domain.PartyJoinRes;
+import umcteam01.catchcar.web.*;
 
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 import static umcteam01.catchcar.config.BaseResponseStatus.*;
-
 
 @Service
 @RequiredArgsConstructor
@@ -73,5 +76,13 @@ public class PartyService {
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
+    }
+    
+    public List<PartyJoinRes> participateParty(PartyJoinReq partyJoinReq) throws BaseException {
+        List<PartyJoinRes> partyJoinRes = partyDao.participateParty(partyJoinReq);
+        if (partyJoinRes.size() == 0) {  // participate 추가에 실패한 경우
+            throw new BaseException(INVALID_PARTICIPATE);
+        }
+        return partyJoinRes;
     }
 }

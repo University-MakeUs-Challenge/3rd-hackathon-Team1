@@ -62,9 +62,18 @@ public class PartyDao {
      */
 //    public void updatePartyActive()
 
-    @Autowired
-    public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+
+    public List<PartyJoinRes> participateParty(PartyJoinReq partyJoinReq){
+        String participatePartyQuery = "insert into Participate (id, member, status, createdAt, updateAt, active)" +
+                "VALUE(?, ?, \"ACTIVE\", now(), now(), \"ACTIVE\")";
+        Object[] participatePartyParams = new Object[]{partyJoinReq.getUser_id(), partyJoinReq.getParty_id()};
+        this.jdbcTemplate.update(participatePartyQuery, participatePartyParams);
+
+        String displayPartyQuery = "SELECT id FROM Participate WHERE member = ?";
+        Long displayPartyParams = partyJoinReq.getParty_id();
+        return this.jdbcTemplate.query(displayPartyQuery,
+                (rs, rowNum) -> new PartyJoinRes(rs.getLong("id")),
+                displayPartyParams);
     }
 
     public int partyCancle(PartyCancleReqDto partyCancleReqDto) {
@@ -190,6 +199,5 @@ public class PartyDao {
         System.out.println(results);
         return results;
     }
-
 
 }
