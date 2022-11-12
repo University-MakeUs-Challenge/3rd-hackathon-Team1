@@ -5,5 +5,4 @@ import umcteam01.catchcar.web.PartyDao;
 
 @Service
 public class PartyService {
-    final PartyDao partyDao;
 }
