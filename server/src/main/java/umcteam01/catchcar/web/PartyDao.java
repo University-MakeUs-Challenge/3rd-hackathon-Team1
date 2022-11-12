@@ -49,7 +49,7 @@ public class PartyDao {
 
     /**
      * 파티 만료 시 status 비활성화로 설정
-     * @param partyReq
+     * @param
      */
     public void updatePartyStatus(PartyExpireReqDto partyReq) {
         String updatePartyStatusQuery = "update Party set status='INACTIVE' where id=?";
@@ -64,8 +64,22 @@ public class PartyDao {
         String updatePartyActiveQuery = "update Party set active="+res+" where id=?";
         Long updatePartyActiveParam = partyReq.getPartyId();
         this.jdbcTemplate.update(updatePartyActiveQuery, updatePartyActiveParam);
-    }
+      }
 
+
+    public List<PartyJoinRes> participateParty(PartyJoinReq partyJoinReq){
+        String participatePartyQuery = "insert into Participate (id, member, status, createdAt, updateAt, active)" +
+                "VALUE(?, ?, \"ACTIVE\", now(), now(), \"ACTIVE\")";
+        Object[] participatePartyParams = new Object[]{partyJoinReq.getUser_id(), partyJoinReq.getParty_id()};
+        this.jdbcTemplate.update(participatePartyQuery, participatePartyParams);
+
+        String displayPartyQuery = "SELECT id FROM Participate WHERE member = ?";
+        Long displayPartyParams = partyJoinReq.getParty_id();
+        return this.jdbcTemplate.query(displayPartyQuery,
+                (rs, rowNum) -> new PartyJoinRes(rs.getLong("id")),
+                displayPartyParams);
+     }
+   
 
     public int partyCancel(PartyCancelReqDto partyCancelReqDto) {
         String getUserQuery = "UPDATE Participate SET active = ? WHERE id = ? AND member = ?"; // 해당 userIdx를 만족하는 유저를 조회하는 쿼리문
@@ -95,9 +109,16 @@ public class PartyDao {
 
     public PartyReadResDto getParty(Long partyId) {
         String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expired_at\n" +
-                "                from Party p, University un, Location pin, Location des, User u\n" +
-                "                where p.id = ? and p.status='ACTIVE'\n" +
-                "                and p.univ = un.id and p.pin = pin.id and p.destination = des.id and p.leader = u.id";
+                "       if(memberNum is null, 0, memberNum) as memberNum\n" +
+                "from Party p\n" +
+                "         join University un on un.id=p.univ\n" +
+                "         join Location pin on pin.id = p.pin\n" +
+                "         join Location des on des.id=p.destination\n" +
+                "         left join (select id, count(*) as memberNum\n" +
+                "                    from Participate\n" +
+                "                    where active = 'ACTIVE'\n" +
+                "                    group by id) as part on part.id = p.id\n" +
+                "where p.active='ACTIVE' and p.id=?;";
         Long getPartyParams = partyId;
 
         return this.jdbcTemplate.queryForObject(getPartyQuery,
@@ -109,13 +130,13 @@ public class PartyDao {
                         rs.getInt("p.min_full"),
                         rs.getString("p.active"),
                         rs.getLong("p.timer"),
-                        rs.getString("p.expiredAt")
-                ),
+                        rs.getString("p.expiredAt"),
+                        rs.getLong("memberNum")),
                 getPartyParams);
     }
 
     public List<PartyReadResDto> getPartyList() {
-        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer\n" +
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expired_at\n" +
                 "                from Party p, University un, Location pin, Location des, User u\n" +
                 "                where p.status='ACTIVE'\n" +
                 "                and p.univ = un.id and p.pin = pin.id and p.destination = des.id and p.leader = u.id" +
@@ -130,8 +151,8 @@ public class PartyDao {
                         rs.getInt("p.min_full"),
                         rs.getString("p.active"),
                         rs.getLong("p.timer"),
-                        rs.getString("p.expiredAt")
-                )
+                        rs.getString("p.expiredAt"),
+                        rs.getLong("p.timer"))
         );
     }
 
@@ -157,8 +178,39 @@ public class PartyDao {
                                 rs.getInt("p.min_full"),
                                 rs.getString("p.active"),
                                 rs.getLong("p.timer"),
-                                rs.getString("p.expiredAt")
-                        );
+                                rs.getString("p.expiredAt"),
+                                rs.getLong("p.timer"));
+                                return partyReadResDto;
+                    }
+                },
+                getPartyParams);
+        System.out.println(results);
+        return results;
+    }
+
+    public List<PartyReadResDto> getPartyListByUniv(Long univ_id) {
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer\n" +
+                "                                from Party p, University un, Location pin, Location des, User u\n" +
+                "                                where p.status='ACTIVE'\n" +
+                "                                and p.univ = un.id and un.id=? and p.pin = pin.id and p.destination = des.id and p.leader = u.id\n" +
+                "                                order by p.expiredAt";
+
+        Long getPartyParams = univ_id;
+        System.out.println(getPartyParams);
+
+        List<PartyReadResDto> results = jdbcTemplate.query(getPartyQuery,
+                new RowMapper<PartyReadResDto>() {
+                    @Override
+                    public PartyReadResDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        PartyReadResDto partyReadResDto = new PartyReadResDto(
+                                rs.getLong("p.id"),
+                                rs.getString("un.name"),
+                                rs.getString("pin.name"),
+                                rs.getString("des.name"),
+                                rs.getInt("p.min_full"),
+                                rs.getString("p.active"),
+                                rs.getLong("p.timer"),
+                                rs.getLong("p.timer"));
                         return partyReadResDto;
                     }
                 },
@@ -166,4 +218,5 @@ public class PartyDao {
         System.out.println(results);
         return results;
     }
+
 }

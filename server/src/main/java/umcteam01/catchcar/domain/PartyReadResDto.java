@@ -1,9 +1,6 @@
 package umcteam01.catchcar.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter @Setter
@@ -18,5 +15,6 @@ public class PartyReadResDto {
     private String active; // 모임 상태 (ACTIVE: 인원 모집중, SUCCESS: 인원 모집 완료, TIMEOVER: 모집 시간 초과)
     private Long timer;
     private String expiredAt;
+    private Long memberNum;
 
 }

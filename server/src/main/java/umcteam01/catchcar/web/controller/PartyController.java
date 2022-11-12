@@ -1,5 +1,7 @@
 package umcteam01.catchcar.web.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import umcteam01.catchcar.config.BaseException;
@@ -14,6 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import static umcteam01.catchcar.config.BaseResponseStatus.REQUEST_ERROR;
+import umcteam01.catchcar.domain.PartyJoinReq;
+import umcteam01.catchcar.domain.PartyJoinRes;
+import umcteam01.catchcar.service.PartyService;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static umcteam01.catchcar.config.BaseResponseStatus.*;
@@ -22,6 +30,8 @@ import static umcteam01.catchcar.config.BaseResponseStatus.*;
 @RequiredArgsConstructor
 @RequestMapping("/party")
 public class PartyController {
+
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final PartyProvider partyProvider;
     private final PartyService partyService;
@@ -55,9 +65,9 @@ public class PartyController {
         }
     }
 
+
     // TODO 파티 만료 시 status -> INACTIVE (partyService.updatePartyStatus)
     // TODO 파티 상태 변경 active -> partyService.updatePartyActive
-
 
 
     @PatchMapping("/{id}")
@@ -82,6 +92,21 @@ public class PartyController {
             return new BaseResponse<>(partyCancelRespDtos);
         } catch (BaseException e) {
             throw new RuntimeException(e);
+        }
+    }
+    
+     /**
+     * 그룹 참여 API
+     * [PATCH] /party
+     */
+    @ResponseBody
+    @PatchMapping("/party")
+    public BaseResponse<List<PartyJoinRes>> participateParty(@RequestBody PartyJoinReq partyJoinReq){
+        try {
+            List<PartyJoinRes> partyJoinRes = partyService.participateParty(partyJoinReq);
+            return new BaseResponse<>(partyJoinRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
         }
     }
 
@@ -117,21 +142,27 @@ public class PartyController {
     }
 
     /**
-     * 필터링 API (pin_id 기준)
+     * 필터링 API
      * [GET] /party/search?pin_id=1
+     * [GET] /party/search?univ_id=1
      */
     @GetMapping("/search")
-    public BaseResponse<List<PartyReadResDto>> getPartyListByPin(@RequestParam("pin_id") Long pin_id) {
-        if (pin_id == null) {
+    public BaseResponse<List<PartyReadResDto>> getPartyListByPin(PartySearchKeyword keyword) throws BaseException {
+        if (keyword.getPin_id() == null && keyword.getUniv_id() == null) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
 
-        try {
-            List<PartyReadResDto> partyReadResDto = partyProvider.getPartyListByPin(pin_id);
-            return new BaseResponse<>(partyReadResDto);
-        } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
+        List<PartyReadResDto> partyReadResDto = new ArrayList<PartyReadResDto>();
+
+        if (keyword.getUniv_id() == null) {
+            partyReadResDto = partyProvider.getPartyListByPin(keyword.getPin_id());
         }
+
+        if (keyword.getPin_id() == null) {
+            partyReadResDto = partyProvider.getPartyListByUniv(keyword.getUniv_id());
+        }
+
+        return new BaseResponse<>(partyReadResDto);
 
     }
 

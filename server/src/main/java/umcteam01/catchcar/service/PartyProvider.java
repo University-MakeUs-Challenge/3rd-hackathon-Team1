@@ -12,6 +12,7 @@ import umcteam01.catchcar.web.UserDao;
 import umcteam01.catchcar.domain.PartyCancelReqDto;
 import umcteam01.catchcar.domain.PartyCancelRespDto;
 
+
 import java.util.List;
 
 import umcteam01.catchcar.domain.PartyReadResDto;
@@ -84,9 +85,18 @@ public class PartyProvider {
     }
 
     public List<PartyReadResDto> getPartyListByPin(Long pin_id) throws BaseException {
-        System.out.println(pin_id);
         try {
             List<PartyReadResDto> partyReadResDto = partyDao.getPartyListByPin(pin_id);
+            return partyReadResDto;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<PartyReadResDto> getPartyListByUniv(Long univ_id) throws BaseException{
+        System.out.println(univ_id);
+        try {
+            List<PartyReadResDto> partyReadResDto = partyDao.getPartyListByUniv(univ_id);
             return partyReadResDto;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
