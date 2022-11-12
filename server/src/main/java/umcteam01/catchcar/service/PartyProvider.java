@@ -9,9 +9,8 @@ import umcteam01.catchcar.domain.*;
 import umcteam01.catchcar.web.PartyDao;
 import umcteam01.catchcar.web.UserDao;
 
-import umcteam01.catchcar.domain.PartyCancleReqDto;
-import umcteam01.catchcar.domain.PartyCancleRespDto;
-import umcteam01.catchcar.web.PartyDao;
+import umcteam01.catchcar.domain.PartyCancelReqDto;
+import umcteam01.catchcar.domain.PartyCancelRespDto;
 
 import java.util.List;
 
@@ -42,10 +41,10 @@ public class PartyProvider {
     }
 
     // ACTIVE 상태인 참여자 List
-    public List<PartyCancleRespDto> getParticipations(PartyCancleReqDto partyCancleReqDto) throws BaseException {
+    public List<PartyCancelRespDto> getParticipations(PartyCancelReqDto partyCancelReqDto) throws BaseException {
         try {
-            List<PartyCancleRespDto> partyCancleRespDtos = partyDao.getParticipations(partyCancleReqDto);
-            return partyCancleRespDtos;
+            List<PartyCancelRespDto> partyCancelRespDtos = partyDao.getParticipations(partyCancelReqDto);
+            return partyCancelRespDtos;
         } catch (Exception exception) {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }

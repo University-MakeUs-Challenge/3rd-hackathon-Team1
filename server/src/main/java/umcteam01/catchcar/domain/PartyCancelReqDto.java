@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartyCancleReqDto {
-    private Long party_id;
-    private Long user_id;
+public class PartyCancelReqDto {
+    private Long partyId;
+    private Long userId;
 }

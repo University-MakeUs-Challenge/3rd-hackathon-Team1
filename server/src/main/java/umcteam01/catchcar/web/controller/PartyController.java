@@ -1,30 +1,22 @@
 package umcteam01.catchcar.web.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import umcteam01.catchcar.config.BaseException;
 import umcteam01.catchcar.config.BaseResponse;
 import umcteam01.catchcar.config.BaseResponseStatus;
-import umcteam01.catchcar.domain.PartyCreateReqDto;
-import umcteam01.catchcar.domain.PartyCreateResDto;
+import umcteam01.catchcar.domain.*;
 import umcteam01.catchcar.service.PartyProvider;
 import umcteam01.catchcar.service.PartyService;
 
-import static umcteam01.catchcar.config.BaseResponseStatus.REQUEST_ERROR;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import umcteam01.catchcar.domain.PartyCancleReqDto;
-import umcteam01.catchcar.domain.PartyCancleRespDto;
-import org.springframework.web.bind.annotation.*;
-import umcteam01.catchcar.domain.PartyReadResDto;
-
 import java.util.List;
 
-import static umcteam01.catchcar.config.BaseResponseStatus.POST_PARTY_EXISTS_LEADER;
+import static umcteam01.catchcar.config.BaseResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +41,10 @@ public class PartyController {
             return new BaseResponse<>(POST_PARTY_EXISTS_LEADER);   // 유저가 이미 하나의 활성상태인 파티그룹을 생성한 경우에서의 예외처리
         }
 
+        if (partyCreateReq.getDestination() == null) {
+            return new BaseResponse<>(POST_PARTY_EMPTY_VALUE);
+        }
+
         try {
             PartyCreateResDto partyCreateRes = partyService.createParty(partyCreateReq);
 
@@ -65,25 +61,25 @@ public class PartyController {
 
 
     @PatchMapping("/{id}")
-    public BaseResponse<List<PartyCancleRespDto>> partyCancle(@RequestBody PartyCancleReqDto partyCancleReqDto) {
-        System.out.println(partyCancleReqDto);
+    public BaseResponse<List<PartyCancelRespDto>> partyCancle(@RequestBody PartyCancelReqDto partyCancelReqDto) {
+        System.out.println(partyCancelReqDto);
         try {
-            partyService.modifyParticipateActive(partyCancleReqDto);
+            partyService.modifyParticipateActive(partyCancelReqDto);
 
         } catch (BaseException e) {
             throw new RuntimeException(e);
         }
         // party id 값이 없을때
-        if (partyCancleReqDto.getParty_id() == null) {
+        if (partyCancelReqDto.getParty_id() == null) {
             return new BaseResponse<>(BaseResponseStatus.PATCH_PARTY_EMPTY_PARTY_ID);
         }
         // user id 값이 없을때
-        if (partyCancleReqDto.getUser_id() == null) {
+        if (partyCancelReqDto.getUser_id() == null) {
             return new BaseResponse<>(BaseResponseStatus.PATCH_PARTY_EMPTY_USER_ID);
         }
         try {
-            List<PartyCancleRespDto> partyCancleRespDtos = partyProvider.getParticipations(partyCancleReqDto);
-            return new BaseResponse<>(partyCancleRespDtos);
+            List<PartyCancelRespDto> partyCancelRespDtos = partyProvider.getParticipations(partyCancelReqDto);
+            return new BaseResponse<>(partyCancelRespDtos);
         } catch (BaseException e) {
             throw new RuntimeException(e);
         }
@@ -137,6 +133,21 @@ public class PartyController {
             return new BaseResponse<>((exception.getStatus()));
         }
 
+    }
+
+    @PatchMapping("/expire/{id}")
+    public BaseResponse<String> expireParty(@PathVariable("id") Long partyId) throws BaseException {
+        try {
+            PartyReadResDto party = partyProvider.getParty(partyId);
+            PartyExpireReqDto partyExpireReq = new PartyExpireReqDto(partyId, party.getExpiredAt());
+            partyService.updatePartyStatus(partyExpireReq);
+
+            String result = "파티가 만료되었습니다.";
+            return new BaseResponse<>(result);
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
 }
