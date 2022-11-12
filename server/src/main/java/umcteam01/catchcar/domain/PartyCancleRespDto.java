@@ -13,8 +13,8 @@ public class PartyCancleRespDto {
     private Long id;
     private Long member;
     private String status;
-    private String active;
     private Date createdAt;
     private Date updatedAt;
+    private String active;
 
 }
