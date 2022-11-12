@@ -94,7 +94,7 @@ public class PartyDao {
     }
 
     public PartyReadResDto getParty(Long partyId) {
-        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer\n" +
+        String getPartyQuery = "select p.id, un.name, pin.name, des.name, p.min_full, p.active, p.timer, p.expired_at\n" +
                 "                from Party p, University un, Location pin, Location des, User u\n" +
                 "                where p.id = ? and p.status='ACTIVE'\n" +
                 "                and p.univ = un.id and p.pin = pin.id and p.destination = des.id and p.leader = u.id";

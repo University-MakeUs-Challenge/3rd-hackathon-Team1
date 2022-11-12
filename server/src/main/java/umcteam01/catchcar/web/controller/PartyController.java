@@ -135,8 +135,8 @@ public class PartyController {
 
     }
 
-    @PatchMapping("/expire/{id}")
-    public BaseResponse<String> expireParty(@PathVariable("id") Long partyId) throws BaseException {
+    @PatchMapping("/expire/{partyId}")
+    public BaseResponse<String> expireParty(@PathVariable("partyId") Long partyId) throws BaseException {
         try {
             PartyReadResDto party = partyProvider.getParty(partyId);
             PartyExpireReqDto partyExpireReq = new PartyExpireReqDto(partyId, party.getExpiredAt());
