@@ -87,8 +87,9 @@ public class PartyController {
     }
 
     /**
-     * 필터링 API (pin_id 기준)
+     * 필터링 API
      * [GET] /party/search?pin_id=1
+     * [GET] /party/search?univ_id=1
      */
     @GetMapping("/search")
     public BaseResponse<List<PartyReadResDto>> getPartyListByPin(PartySearchKeyword keyword) throws BaseException {
