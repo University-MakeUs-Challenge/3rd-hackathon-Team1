@@ -54,11 +54,15 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_USERNAME(false, 4014, "회원 이름을 변경하는 데 실패했습니다."),
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패했습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패했습니다.");
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패했습니다."),
 
     /**
      * 5000, 6000 ~ : 필요 시 직접 구현하기!
      */
+    PATCH_PARTY_EMPTY_PARTY_ID(false, 5001, "그룹 아이디를 확인해주세요."),
+    PATCH_PARTY_EMPTY_USER_ID(false, 5002, "유저아이디를 확인해 주세요."),
+    MODIFY_FAIL_USER_ACTIVE(false, 5003, "유저 상태 변경에 실패하였습니다.");
+
 
     private final boolean isSuccess;
     private final int code;
