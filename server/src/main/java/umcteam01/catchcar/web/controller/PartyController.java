@@ -12,9 +12,11 @@ import umcteam01.catchcar.domain.PartyCancleReqDto;
 import umcteam01.catchcar.domain.PartyCancleRespDto;
 import org.springframework.web.bind.annotation.*;
 import umcteam01.catchcar.domain.PartyReadResDto;
+import umcteam01.catchcar.domain.PartySearchKeyword;
 import umcteam01.catchcar.service.PartyProvider;
 import umcteam01.catchcar.service.PartyService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -89,19 +91,26 @@ public class PartyController {
      * [GET] /party/search?pin_id=1
      */
     @GetMapping("/search")
-    public BaseResponse<List<PartyReadResDto>> getPartyListByPin(@RequestParam("pin_id") Long pin_id) {
-        if (pin_id == null) {
+    public BaseResponse<List<PartyReadResDto>> getPartyListByPin(PartySearchKeyword keyword) throws BaseException {
+        if (keyword.getPin_id() == null && keyword.getUniv_id() == null) {
             return new BaseResponse<>(REQUEST_ERROR);
         }
 
-        try {
-            List<PartyReadResDto> partyReadResDto = partyProvider.getPartyListByPin(pin_id);
-            return new BaseResponse<>(partyReadResDto);
-        } catch (BaseException exception) {
-            return new BaseResponse<>((exception.getStatus()));
+        List<PartyReadResDto> partyReadResDto = new ArrayList<PartyReadResDto>();
+
+        if (keyword.getUniv_id() == null) {
+            partyReadResDto = partyProvider.getPartyListByPin(keyword.getPin_id());
         }
 
+        if (keyword.getPin_id() == null) {
+            partyReadResDto = partyProvider.getPartyListByUniv(keyword.getUniv_id());
+        }
+
+        return new BaseResponse<>(partyReadResDto);
+
     }
+
+
 
 }
 
