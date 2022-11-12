@@ -53,6 +53,7 @@ public class PartyProvider {
 
     public PartyReadResDto getParty(Long party_id) throws BaseException {
         try {
+            System.out.println("PartyProvider getParty 실행");
             PartyReadResDto partyReadResDto = partyDao.getParty(party_id);
             return partyReadResDto;
         } catch (Exception exception) {
@@ -98,6 +99,14 @@ public class PartyProvider {
         try {
             List<PartyReadResDto> partyReadResDto = partyDao.getPartyListByUniv(univ_id);
             return partyReadResDto;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public String getPartyExpire(Long partyId) throws BaseException {
+        try {
+            return partyDao.getPartyExpire(partyId);
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

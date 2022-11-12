@@ -61,10 +61,10 @@ public class PartyDao {
      * 파티의 상태값을 저장 (ACTIVE : 인원 모집 중, SUCCESS: 모집 완료, TIMEOVER: 시간만료)
      */
     public void updatePartyActive(PartyExpireReqDto partyReq, String res) {
-        String updatePartyActiveQuery = "update Party set active="+res+" where id=?";
-        Long updatePartyActiveParam = partyReq.getPartyId();
+        String updatePartyActiveQuery = "update Party set active=? where id=?";
+        Object[] updatePartyActiveParam = new Object[] {res, partyReq.getPartyId()};
         this.jdbcTemplate.update(updatePartyActiveQuery, updatePartyActiveParam);
-      }
+    }
 
 
     public List<PartyJoinRes> participateParty(PartyJoinReq partyJoinReq){
@@ -180,7 +180,7 @@ public class PartyDao {
                                 rs.getLong("p.timer"),
                                 rs.getString("p.expiredAt"),
                                 rs.getLong("p.timer"));
-                                return partyReadResDto;
+                        return partyReadResDto;
                     }
                 },
                 getPartyParams);
@@ -219,6 +219,12 @@ public class PartyDao {
                 getPartyParams);
         System.out.println(results);
         return results;
+    }
+
+    public String getPartyExpire(Long partyId) {
+        String getPartyExpireQuery = "select expiredAt from Party where id=?";
+        Long getPartyExpireParam = partyId;
+        return this.jdbcTemplate.queryForObject(getPartyExpireQuery, String.class, getPartyExpireParam);
     }
 
 }

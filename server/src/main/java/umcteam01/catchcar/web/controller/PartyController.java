@@ -169,9 +169,13 @@ public class PartyController {
     @PatchMapping("/expire/{partyId}")
     public BaseResponse<String> expireParty(@PathVariable("partyId") Long partyId) throws BaseException {
         try {
-            PartyReadResDto party = partyProvider.getParty(partyId);
-            PartyExpireReqDto partyExpireReq = new PartyExpireReqDto(partyId, party.getExpiredAt());
+            System.out.println("expireParty Controller");
+            String party = partyProvider.getPartyExpire(partyId);
+            System.out.println("partyExpire = " + party);
+            System.out.println("getParty 실행 후");
+            PartyExpireReqDto partyExpireReq = new PartyExpireReqDto(partyId, party);
             partyService.updatePartyStatus(partyExpireReq);
+            System.out.println("updatePartyStatus 실행 후");
 
             String result = "파티가 만료되었습니다.";
             return new BaseResponse<>(result);

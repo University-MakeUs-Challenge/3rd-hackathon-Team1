@@ -8,13 +8,8 @@ import org.springframework.stereotype.Service;
 import umcteam01.catchcar.config.BaseException;
 
 import umcteam01.catchcar.config.BaseResponseStatus;
-import umcteam01.catchcar.domain.PartyCancelReqDto;
-import umcteam01.catchcar.domain.PartyCreateReqDto;
-import umcteam01.catchcar.domain.PartyCreateResDto;
-import umcteam01.catchcar.domain.PartyExpireReqDto;
+import umcteam01.catchcar.domain.*;
 import umcteam01.catchcar.web.PartyDao;
-import umcteam01.catchcar.domain.PartyJoinReq;
-import umcteam01.catchcar.domain.PartyJoinRes;
 import umcteam01.catchcar.web.*;
 
 import java.time.LocalTime;
@@ -67,9 +62,9 @@ public class PartyService {
         try {
             
             // TODO 파티 인원 수가 찬 경우 SUCCESS 로 상태 변경
-            String res = "SUCCESS";
-            int minuteIdx = partyReq.getExpiredAt().indexOf('분');
-            if(isTimeOver(partyReq, res, minuteIdx)) res = "TIMEOVER";
+            String res = Status.SUCCESS.name();
+            if(isTimeOver(partyReq, res)) res = Status.TIMEOVER.name();
+            System.out.println("res = " + res);
             partyDao.updatePartyActive(partyReq, res);
             partyDao.updatePartyStatus(partyReq);
         } catch (Exception exception) {
@@ -78,10 +73,14 @@ public class PartyService {
     }
 
     // 시간 만료 여부 체크
-    private boolean isTimeOver(PartyExpireReqDto partyReq, String res, int minuteIdx) {
+    private boolean isTimeOver(PartyExpireReqDto partyReq, String res) {
+        int minuteIdx = partyReq.getExpiredAt().indexOf('분');
+        int secondIdx = partyReq.getExpiredAt().indexOf('초');
+
         System.out.println(Integer.parseInt(partyReq.getExpiredAt().substring(0, minuteIdx)));
-        System.out.println(Integer.parseInt(partyReq.getExpiredAt().substring(minuteIdx +2, partyReq.getExpiredAt().length()-2)));
-        if (Integer.parseInt(partyReq.getExpiredAt().substring(0, minuteIdx)) <= 0 && Integer.parseInt(partyReq.getExpiredAt().substring(minuteIdx +2, partyReq.getExpiredAt().length()-2)) <= 0) {
+        System.out.println(Integer.parseInt(partyReq.getExpiredAt().substring(minuteIdx +2, secondIdx)));
+
+        if (Integer.parseInt(partyReq.getExpiredAt().substring(0, minuteIdx)) <= 0 && Integer.parseInt(partyReq.getExpiredAt().substring(minuteIdx +2, secondIdx)) <= 0) {
             return true;
         } else {
             return false;
