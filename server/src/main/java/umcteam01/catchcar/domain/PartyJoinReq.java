@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter @Setter
 @AllArgsConstructor
-public class PartyJoinReqDto {
+public class PartyJoinReq {
     private Long party_id;
     private Long user_id;
 }
