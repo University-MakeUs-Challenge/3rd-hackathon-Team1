@@ -31,6 +31,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PASSWORD(false, 2020, "비밀번호를 입력해주세요."),
     USERS_PASSWORD_FORMAT(false, 2021, "비밀번호는 8자 이상의 영문 대소문자와 특수문자로 구성해야 합니다."),
 
+    INVALID_PARTICIPATE(false, 2030, "유효하지 않은 파티입니다."),
 
     /**
      * 3000 : Response 오류
