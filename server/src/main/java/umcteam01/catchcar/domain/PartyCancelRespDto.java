@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartyCancleRespDto {
+public class PartyCancelRespDto {
     private Long id;
     private Long member;
     private String status;

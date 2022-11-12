@@ -11,13 +11,14 @@ import java.util.Date;
 public class Party {
     private Long id;
     private String univ;
-    private String pin;   // 모임장소
-    private String destination;   // 목적지
+    private String pin;   // 모임장소명 
+    private String destination;   // 목적지명
+    private String leader; // 모임 생성자 닉네임
     private int minFull;   // 최소인원
     private Status status;
     private Date createdAt;
     private Date updatedAt;
     private Status active;
-    private Date expiredAt;
+    private String expiredAt;
 
 }

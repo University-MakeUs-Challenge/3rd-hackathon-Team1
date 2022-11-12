@@ -3,8 +3,6 @@ package umcteam01.catchcar.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import umcteam01.catchcar.domain.PartyCancleReqDto;
-import umcteam01.catchcar.domain.PartyCancleRespDto;
 import umcteam01.catchcar.domain.UniversityRespDto;
 
 import java.util.List;
