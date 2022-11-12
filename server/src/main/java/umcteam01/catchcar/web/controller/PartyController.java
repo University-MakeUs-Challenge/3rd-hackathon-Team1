@@ -1,34 +1,64 @@
 package umcteam01.catchcar.web.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import umcteam01.catchcar.config.BaseException;
+import umcteam01.catchcar.config.BaseResponse;
+import umcteam01.catchcar.config.BaseResponseStatus;
+import umcteam01.catchcar.domain.*;
+import umcteam01.catchcar.service.PartyProvider;
+import umcteam01.catchcar.service.PartyService;
+
 import static umcteam01.catchcar.config.BaseResponseStatus.REQUEST_ERROR;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import umcteam01.catchcar.config.BaseException;
-import umcteam01.catchcar.config.BaseResponse;
-import umcteam01.catchcar.config.BaseResponseStatus;
-import umcteam01.catchcar.domain.PartyCancleReqDto;
-import umcteam01.catchcar.domain.PartyCancleRespDto;
+
 import org.springframework.web.bind.annotation.*;
-import umcteam01.catchcar.domain.PartyReadResDto;
-import umcteam01.catchcar.domain.PartySearchKeyword;
-import umcteam01.catchcar.service.PartyProvider;
-import umcteam01.catchcar.service.PartyService;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static umcteam01.catchcar.config.BaseResponseStatus.POST_PARTY_EXISTS_LEADER;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/party")
 public class PartyController {
-    private final PartyService partyService;
-    private final PartyProvider partyProvider;
 
-    public PartyController(PartyProvider partyProvider, PartyService partyService) {
-        this.partyProvider = partyProvider;
-        this.partyService = partyService;
+    private final PartyProvider partyProvider;
+    private final PartyService partyService;
+
+    /**
+     * 파티 생성
+     * @param partyCreateReq
+     * @return
+     * @throws BaseException
+     */
+    @ResponseBody
+    @PostMapping("")
+    public BaseResponse<PartyCreateResDto> createParty(@RequestBody PartyCreateReqDto partyCreateReq) throws BaseException {
+        if (partyProvider.checkPartyLeader(partyCreateReq.getLeader()) != 0) {
+            System.out.println("party leader check = " + partyProvider.checkPartyLeader(partyCreateReq.getLeader()));
+
+            return new BaseResponse<>(POST_PARTY_EXISTS_LEADER);   // 유저가 이미 하나의 활성상태인 파티그룹을 생성한 경우에서의 예외처리
+        }
+
+        try {
+            PartyCreateResDto partyCreateRes = partyService.createParty(partyCreateReq);
+
+            System.out.println("PartyController: createPary 실행");
+            return new BaseResponse<>(partyCreateRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
+
+    // TODO 파티 만료 시 status -> INACTIVE (partyService.updatePartyStatus)
+    // TODO 파티 상태 변경 active -> partyService.updatePartyActive
+
 
     @PatchMapping("/{id}")
     public BaseResponse<List<PartyCancleRespDto>> partyCancle(@RequestBody PartyCancleReqDto partyCancleReqDto) {
