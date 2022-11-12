@@ -10,6 +10,10 @@ import umcteam01.catchcar.web.PartyDao;
 
 import java.util.List;
 
+import umcteam01.catchcar.domain.PartyReadResDto;
+
+import static umcteam01.catchcar.config.BaseResponseStatus.DATABASE_ERROR;
+
 @Service
 @RequiredArgsConstructor
 public class PartyProvider {
@@ -25,4 +29,31 @@ public class PartyProvider {
         }
     }
 
+    public PartyReadResDto getParty(Long party_id) throws BaseException{
+        try {
+            PartyReadResDto partyReadResDto = partyDao.getParty(party_id);
+            return partyReadResDto;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<PartyReadResDto> getPartyList() throws BaseException{
+        try {
+            List<PartyReadResDto> partyReadResDto = partyDao.getPartyList();
+            return partyReadResDto;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<PartyReadResDto> getPartyListByPin(Long pin_id) throws BaseException {
+        System.out.println(pin_id);
+        try {
+            List<PartyReadResDto> partyReadResDto = partyDao.getPartyListByPin(pin_id);
+            return partyReadResDto;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
