@@ -61,7 +61,7 @@ public class PartyController {
 
 
     @PatchMapping("/{id}")
-    public BaseResponse<List<PartyCancelRespDto>> partyCancle(@RequestBody PartyCancelReqDto partyCancelReqDto) {
+    public BaseResponse<List<PartyCancelRespDto>> partyCancel(@RequestBody PartyCancelReqDto partyCancelReqDto) {
         System.out.println(partyCancelReqDto);
         try {
             partyService.modifyParticipateActive(partyCancelReqDto);
@@ -70,11 +70,11 @@ public class PartyController {
             throw new RuntimeException(e);
         }
         // party id 값이 없을때
-        if (partyCancelReqDto.getParty_id() == null) {
+        if (partyCancelReqDto.getPartyId() == null) {
             return new BaseResponse<>(BaseResponseStatus.PATCH_PARTY_EMPTY_PARTY_ID);
         }
         // user id 값이 없을때
-        if (partyCancelReqDto.getUser_id() == null) {
+        if (partyCancelReqDto.getUserId() == null) {
             return new BaseResponse<>(BaseResponseStatus.PATCH_PARTY_EMPTY_USER_ID);
         }
         try {
