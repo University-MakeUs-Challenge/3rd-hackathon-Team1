@@ -32,7 +32,7 @@ public class PartyDao {
 
     public List<PartyCancleRespDto> getParticipations(PartyCancleReqDto partyCancleReqDto) {
         String getParticipateQuery = "select * from Participate AS pa " +
-                                        "LEFT OUTER JOIN User AS user ON pa.id = user.id where pa.id = ? AND pa.active = ? ";
+                                        "LEFT OUTER JOIN User AS user ON pa.member = user.id where pa.id = ? AND pa.active = ? ";
         Long partyId = partyCancleReqDto.getParty_id();
         String status = "ACTIVE";
         return this.jdbcTemplate.query(getParticipateQuery,
@@ -42,7 +42,9 @@ public class PartyDao {
                         rs.getString("status"),
                         rs.getDate("createdAt"),
                         rs.getDate("updateAt"),
-                        rs.getString("active")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getString("active"),
+                        rs.getString("email"),
+                        rs.getString("nickname")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                ,partyId ,status); // 복수개의 회원정보들을 얻기 위해 jdbcTemplate 함수(Query, 객체 매핑 정보)의 결과 반환(동적쿼리가 아니므로 Parmas부분이 없음)
     }
 

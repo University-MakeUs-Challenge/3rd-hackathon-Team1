@@ -15,7 +15,7 @@ import java.util.List;
 public class PartyProvider {
     private final PartyDao partyDao;
 
-    // User들의 정보를 조회
+    // ACTIVE 상태인 참여자 List
     public List<PartyCancleRespDto> getParticipations(PartyCancleReqDto partyCancleReqDto) throws BaseException {
         try {
             List<PartyCancleRespDto> partyCancleRespDtos = partyDao.getParticipations(partyCancleReqDto);

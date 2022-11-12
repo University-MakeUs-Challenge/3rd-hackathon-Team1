@@ -16,5 +16,7 @@ public class PartyCancleRespDto {
     private Date createdAt;
     private Date updatedAt;
     private String active;
+    private String email;
+    private String nickname;
 
 }
