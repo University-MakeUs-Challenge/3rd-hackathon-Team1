@@ -1,6 +1,6 @@
 package umcteam01.catchcar.web.controller;
 
-import lombok.RequiredArgsConstructor;
+import static umcteam01.catchcar.config.BaseResponseStatus.REQUEST_ERROR;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,19 +10,25 @@ import umcteam01.catchcar.config.BaseResponse;
 import umcteam01.catchcar.config.BaseResponseStatus;
 import umcteam01.catchcar.domain.PartyCancleReqDto;
 import umcteam01.catchcar.domain.PartyCancleRespDto;
+import org.springframework.web.bind.annotation.*;
+import umcteam01.catchcar.domain.PartyReadResDto;
 import umcteam01.catchcar.service.PartyProvider;
 import umcteam01.catchcar.service.PartyService;
 
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@RequestMapping("/party")
 public class PartyController {
     private final PartyService partyService;
     private final PartyProvider partyProvider;
 
+    public PartyController(PartyProvider partyProvider, PartyService partyService) {
+        this.partyProvider = partyProvider;
+        this.partyService = partyService;
+    }
 
-    @PatchMapping("/party/{id}")
+    @PatchMapping("/{id}")
     public BaseResponse<List<PartyCancleRespDto>> partyCancle(@RequestBody PartyCancleReqDto partyCancleReqDto) {
         System.out.println(partyCancleReqDto);
         try {
@@ -42,9 +48,61 @@ public class PartyController {
         try {
             List<PartyCancleRespDto> partyCancleRespDtos = partyProvider.getParticipations(partyCancleReqDto);
             return new BaseResponse<>(partyCancleRespDtos);
+        } catch (BaseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 그룹 전체 조회 API
+     * [GET] /party
+     */
+    @GetMapping("")
+    public BaseResponse<List<PartyReadResDto>> getPartyList() {
+        try {
+            List<PartyReadResDto> partyReadResDto = partyProvider.getPartyList();
+            return new BaseResponse<>(partyReadResDto);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
 
     }
+
+
+    /**
+     * 그룹 단일 조회 API
+     * [GET] /party/:party_id
+     */
+    @GetMapping("/{party_id}")
+    public BaseResponse<PartyReadResDto> getParty(@PathVariable("party_id") Long party_id) {
+        try {
+            PartyReadResDto partyReadResDto = partyProvider.getParty(party_id);
+            return new BaseResponse<>(partyReadResDto);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
+    /**
+     * 필터링 API (pin_id 기준)
+     * [GET] /party/search?pin_id=1
+     */
+    @GetMapping("/search")
+    public BaseResponse<List<PartyReadResDto>> getPartyListByPin(@RequestParam("pin_id") Long pin_id) {
+        if (pin_id == null) {
+            return new BaseResponse<>(REQUEST_ERROR);
+        }
+
+        try {
+            List<PartyReadResDto> partyReadResDto = partyProvider.getPartyListByPin(pin_id);
+            return new BaseResponse<>(partyReadResDto);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
 }
+
+
